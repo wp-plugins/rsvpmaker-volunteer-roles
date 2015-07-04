@@ -7,7 +7,7 @@ License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.0
 Tested up to: 4.2.2
-Stable tag: 1.0
+Stable tag: 1.1
 
 A volunteer tracking add-on to RSVPMaker
 
@@ -71,6 +71,8 @@ For basic usage, you can also have a look at the [plugin homepage](http://www.rs
     See the GNU General Public License at <http://www.gnu.org/licenses/gpl-2.0.html>.
 	
 == Changelog ==
+
+= 1.1 =
 
 = 1.0 =
 

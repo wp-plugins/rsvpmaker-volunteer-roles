@@ -5,7 +5,7 @@ Plugin Name: RSVPMaker Volunteer Roles
 Plugin URI: http://www.rsvpmaker.com
 Description: RSVPMaker add-on for role signups.
 Author: David F. Carr
-Version: 1.0
+Version: 1.1
 Author URI: http://www.carrcommunications.com
 */
 
@@ -99,7 +99,7 @@ return str_replace('_',' ',$p[1]);
 
 function rsvpvolunteer_scripts() {
 global $post;
-if(($post->post_type != 'rsvpmaker') && !strpos($post->post_content,'_upcoming') )
+if(($post->post_type != 'rsvpmaker') && !strpos($post->post_content,'_upcoming') && !strpos($post->post_content,'volunteer_calendar') )
 	return;
 
 	wp_enqueue_script(
@@ -118,8 +118,6 @@ add_action( 'wp_ajax_volunteer_roles_withdraw', 'volunteer_roles_withdraw_ajax' 
 add_action( 'wp_ajax_nopriv_volunteer_roles_withdraw', 'volunteer_roles_withdraw_ajax' );
 
 function volunteer_roles_ajax() { 
-global $wpdb;
-global $rsvp_options;
 
 $key = $_POST["key"];
 $user_id = (int) $_POST["user_id"];
@@ -136,25 +134,11 @@ if($user_id == 0)
 	}
 $user = get_userdata($user_id);
 printf('<strong>%s %s signed up:</strong>',$user->user_firstname, $user->user_lastname);
-
-$role = vmeta_to_role($key);
-$rsvp_to = $rsvp_options["rsvp_to"]; 
-$t = strtotime($wpdb->get_var("SELECT datetime FROM ".$wpdb->prefix."rsvp_dates WHERE postID=".$event_id.' ORDER BY datetime'));
-$date = date($rsvp_options["long_date"],$t);
-$subject = sprintf('%s %s signed up for %s on %s',$user->user_firstname, $user->user_lastname, $role, $date);
-$message = sprintf('%s %s %s'."\n\n".'%s'."\n\n".'%s',$user->user_firstname, $user->user_lastname, $user->user_email, $role, $date);
-$rsvp["first"] = $user->user_firstname;
-$rsvp["last"] = $user->user_lastname;
-$rsvp["email"] = $user->user_email;
-rsvp_notifications ($rsvp,$rsvp_to,$subject,$message);
-
 exit();
 }
 
 
 function volunteer_roles_withdraw_ajax() {
-global $wpdb;
-global $rsvp_options;
 
 $key = $_POST["key"];
 $user_id = (int) $_POST["user_id"];
@@ -166,17 +150,7 @@ $user = get_userdata($user_id);
 
 printf('<strong>%s %s withdrawn: </strong>',$user->user_firstname, $user->user_lastname);
 
-$role = vmeta_to_role($key);
-$rsvp_to = $rsvp_options["rsvp_to"]; 
-$t = strtotime($wpdb->get_var("SELECT datetime FROM ".$wpdb->prefix."rsvp_dates WHERE postID=".$event_id.' ORDER BY datetime'));
-$date = date($rsvp_options["long_date"],$t);
-$subject = sprintf('%s %s withdrawn: %s on %s',$user->user_firstname, $user->user_lastname, $role, $date);
-$message = sprintf('%s %s %s'."\n\n".'withdrawn from %s %s',$user->user_firstname, $user->user_lastname, $user->user_email, $role, $date);
-$rsvp["first"] = $user->user_firstname;
-$rsvp["last"] = $user->user_lastname;
-$rsvp["email"] = $user->user_email;
-rsvp_notifications ($rsvp,$rsvp_to,$subject,$message);
-
+//echo json_encode($_POST);
 exit();
 }
 
